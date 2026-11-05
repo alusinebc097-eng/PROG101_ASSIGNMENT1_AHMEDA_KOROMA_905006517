@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flowgorithm fileversion="2.18">
+  <attributes>
+    <attribute name="name" value="Freetown Flash Flood Alert Network (F3-Alert)" />
+    <attribute name="authors" value="" />
+    <attribute name="about" value="Flowchart for monitoring water level and rainfall, evaluating flood risk, and issuing community alerts." />
+    <attribute name="saved" value="true" />
+    <attribute name="created" value="2026-11-03 23:00:00" />
+  </attributes>
+  <function name="Main" type="None" variable="" isMain="True">
+    <parameters />
+    <body>
+      <declare name="communityName" type="String" array="False" size="" />
+      <declare name="currentWaterLevel" type="Real" array="False" size="" />
+      <declare name="currentRainRate" type="Real" array="False" size="" />
+      <declare name="systemStatus" type="String" array="False" size="" />
+      <declare name="keepMonitoring" type="Boolean" array="False" size="" />
+      <declare name="criticalWaterThreshold" type="Real" array="False" size="" />
+      <declare name="alertWaterThreshold" type="Real" array="False" size="" />
+      <declare name="heavyRainThreshold" type="Real" array="False" size="" />
+      <assign variable="communityName" expression="&quot;Kroo Bay Sector A&quot;" />
+      <assign variable="criticalWaterThreshold" expression="2.5" />
+      <assign variable="alertWaterThreshold" expression="1.8" />
+      <assign variable="heavyRainThreshold" expression="45.0" />
+      <assign variable="keepMonitoring" expression="True" />
+      <output expression="&quot;F3-Alert System Initialized for: &quot; &amp; communityName" newline="True" />
+      <while expression="keepMonitoring = True">
+        <output expression="&quot;Enter current water level (metres): &quot;" newline="True" />
+        <input variable="currentWaterLevel" />
+        <output expression="&quot;Enter current rainfall rate (mm/hour): &quot;" newline="True" />
+        <input variable="currentRainRate" />
+        <assign variable="systemStatus" expression="EvaluateRisk(currentWaterLevel, currentRainRate, criticalWaterThreshold, alertWaterThreshold, heavyRainThreshold)" />
+        <if expression="systemStatus = &quot;CRITICAL&quot;">
+          <then>
+            <output expression="&quot;[ALARM TRIGGERED] Community siren: ON&quot;" newline="True" />
+            <output expression="&quot;[SMS BROADCAST] Emergency! Flood imminent. Evacuate to higher ground immediately!&quot;" newline="True" />
+          </then>
+          <else>
+            <if expression="systemStatus = &quot;WARNING&quot;">
+              <then>
+                <output expression="&quot;[SYSTEM NOTICE] Siren remains SILENT.&quot;" newline="True" />
+                <output expression="&quot;[SMS BROADCAST] Caution. Water levels are rising. Be on high alert.&quot;" newline="True" />
+              </then>
+              <else>
+                <output expression="&quot;[STATUS REPORT] System normal. Channels flowing at safe capacity.&quot;" newline="True" />
+              </else>
+            </if>
+          </else>
+        </if>
+        <output expression="&quot;Continue monitoring? Enter True or False: &quot;" newline="True" />
+        <input variable="keepMonitoring" />
+      </while>
+      <output expression="&quot;F3-Alert monitoring stopped.&quot;" newline="True" />
+    </body>
+  </function>
+  <function name="EvaluateRisk" type="String" variable="statusResult" isMain="False">
+    <parameters>
+      <parameter name="level" type="Real" array="False" />
+      <parameter name="rain" type="Real" array="False" />
+      <parameter name="critThresh" type="Real" array="False" />
+      <parameter name="alertThresh" type="Real" array="False" />
+      <parameter name="rainThresh" type="Real" array="False" />
+    </parameters>
+    <body>
+      <declare name="statusResult" type="String" array="False" size="" />
+      <if expression="level &gt;= critThresh or (level &gt;= alertThresh and rain &gt;= rainThresh)">
+        <then>
+          <assign variable="statusResult" expression="&quot;CRITICAL&quot;" />
+        </then>
+        <else>
+          <if expression="level &gt;= alertThresh and level &lt; critThresh">
+            <then>
+              <assign variable="statusResult" expression="&quot;WARNING&quot;" />
+            </then>
+            <else>
+              <assign variable="statusResult" expression="&quot;NORMAL&quot;" />
+            </else>
+          </if>
+        </else>
+      </if>
+      <return expression="statusResult" />
+    </body>
+  </function>
+</flowgorithm>
