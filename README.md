@@ -284,6 +284,151 @@ Warnings must be accurate, understandable and coordinated with recognised emerge
 
 F3-Alert is a proposed project and should not be described as an officially recognised Digital Public Good unless it has completed the required assessment and recognition process.
 
+# Risk Model and Maximum Composite Score
+
+## 1\. Risk model
+
+The proposed model uses two main indicators\:
+
+1. **Water level\:** Measures the height of water detected by the ultrasonic sensor.
+2. **Rainfall intensity\:** Measures the amount of rainfall in millimetres per hour.
+
+For the prototype, the following maximum values are used as reference points\:
+
+| Indicator | Maximum reference value | Weight |
+|--------|--------|--------|
+| Water level | 3.0 metres | 60% |
+| Rainfall intensity | 60 mm/hr | 40% |
+| **Total** |  | **100%** |
+
+These are proposed classroom model values, not validated flood-safety limits.
+
+## 2\. Composite risk score calculation
+
+The composite score is calculated using\:
+
+\[
+R=(W_s\times 0.60)+(R_s\times 0.40)
+\]
+
+Where\:
+
+- \(R\) \= Composite risk score
+- \(W_s\) \= Water-level score
+- \(R_s\) \= Rainfall score
+
+First, calculate each indicator's normalised score\:
+
+\[
+W_s=\frac{\text{Measured water level}}{3.0}\times100
+\]
+
+\[
+R_s=\frac{\text{Measured rainfall}}{60}\times100
+\]
+
+To prevent scores from exceeding 100, each normalised score is capped at 100.
+
+## 3\. Maximum composite score
+
+MAXIMUM COMPOSITE RISK SCORE
+
+# 100 / 100
+
+(Critical risk)
+
+The maximum score is achieved when both indicators reach or exceed their reference values.
+
+---
+
+| Indicator | Score | Weighted contribution |
+|--------|--------|--------|
+| Water level | 100 | 60 |
+| Rainfall | 100 | 40 |
+| **Total** |  | **100** |
+
+## 4\. Risk classification
+
+| Composite score | Risk category | System response |
+|--------|--------|--------|
+| 0–29 | Normal | Continue monitoring |
+| 30–59 | Moderate | Send warning notification |
+| 60–79 | High | Activate siren and notify emergency teams |
+| 80–100 | Critical | Issue urgent evacuation warning and notify emergency responders |
+
+## 5\. Example calculation
+
+Suppose the sensors record\:
+
+- Water level = 2.4 metres
+- Rainfall intensity = 50 mm/hr
+
+**Step 1: Water-level score**
+
+\[
+W_s=\frac{2.4}{3.0}\times100=80
+\]
+
+**Step 2: Rainfall score**
+
+\[
+R_s=\frac{50}{60}\times100=83.33
+\]
+
+**Step 3: Composite score**
+
+\[
+R=(80\times0.60)+(83.33\times0.40)
+\]
+
+\[
+R=48+33.33=\boxed{81.33}
+\]
+
+EXAMPLE RESULT
+
+# 81.33 / 100
+
+(Critical risk)
+
+**Recommended system response\:** Issue an urgent warning, activate the appropriate alert mechanisms and notify emergency responders.
+
+## 6\. Pseudocode for the composite risk model
+
+```
+FUNCTION CalculateCompositeRisk(waterLevel, rainfall)
+
+    waterScore = (waterLevel / 3.0) * 100
+    rainScore = (rainfall / 60.0) * 100
+
+    IF waterScore > 100 THEN
+        waterScore = 100
+    ENDIF
+
+    IF rainScore > 100 THEN
+        rainScore = 100
+    ENDIF
+
+    compositeScore = (waterScore * 0.60) +
+                     (rainScore * 0.40)
+
+    RETURN compositeScore
+
+END FUNCTION
+```
+
+## 7\. Important safety rule
+
+The composite score should not be the only way the system identifies danger. The existing F3-Alert emergency thresholds should override the score\:
+
+- Water level at or above 2.5 metres: Critical.
+- Water level at or above 1.8 metres: At least Alert.
+- Rainfall at or above 45 mm/hr: At least Alert.
+
+This ensures that a dangerous water level cannot be hidden by a lower rainfall reading. Sensor faults or missing readings must also trigger an operator notification rather than a Normal classification.
+
+**Conclusion\:** The proposed F3-Alert model has a maximum composite score of **100 points**, with water level contributing 60% and rainfall intensity contributing 40%. It provides a simple way to assess flood risk and determine appropriate warning responses. The weights, reference values and response thresholds must be tested and validated with local hydrological and disaster-management experts before real-world deployment.
+
 # 12. SYSTEM MODULES
 
 The system is divided into modules to make development, testing and maintenance easier.
@@ -565,3 +710,13 @@ The project aims to support community preparedness, protect lives and properties
 4. Digital Public Goods Alliance. *Digital Public Goods Standard*. https://www.digitalpublicgoods.net/standard
 
 5. United Nations Office for Digital and Emerging Technologies. *Digital Public Goods*. https://www.un.org/digital-emerging-technologies/content/digital-public-goods
+
+6. <img width="1366" height="768" alt="flow 001" src="https://github.com/user-attachments/assets/9850a50f-9e36-4777-bee4-e3ecfb631f85" />
+<img width="1366" height="768" alt="flow 002" src="https://github.com/user-attachments/assets/4020a27a-434e-45e8-b1ea-5182e0187ca5" />
+<img width="1366" height="768" alt="flow 003" src="https://github.com/user-attachments/assets/760c31dd-a865-4e13-99fa-6284edf5005c" />
+<img width="1366" height="768" alt="flow 004" src="https://github.com/user-attachments/assets/721157d0-29b5-4433-90a6-0378908bb0e1" />
+
+## Prepared by
+
+Ahmeda Koroma
+Student ID: 905006517
